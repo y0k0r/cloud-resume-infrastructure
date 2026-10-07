@@ -5,7 +5,7 @@ data "aws_cloudfront_cache_policy" "managed_caching_optimized_tr" {
 resource "aws_cloudfront_distribution" "cf_distribution" {
   origin {
     domain_name = aws_s3_bucket_website_configuration.tr_com.website_endpoint
-    origin_id   = "toyokorivera.com"
+    origin_id   = "site-origin"
 
     custom_origin_config {
       http_port              = 80
@@ -15,7 +15,7 @@ resource "aws_cloudfront_distribution" "cf_distribution" {
     }
   }
 
-  aliases      = ["toyokorivera.com", "www.toyokorivera.com"]
+  aliases      = var.create_redirect ? [ local.site_domain, "www.${var.sub_domain}"] : [local.site_domain] 
   enabled      = true
   http_version = "http2and3"
   price_class  = "PriceClass_100"
@@ -23,7 +23,7 @@ resource "aws_cloudfront_distribution" "cf_distribution" {
   default_cache_behavior {
     allowed_methods        = ["GET", "HEAD"]
     cached_methods         = ["GET", "HEAD"]
-    target_origin_id       = "toyokorivera.com"
+    target_origin_id       = "site-origin"
     viewer_protocol_policy = "redirect-to-https"
     cache_policy_id        = data.aws_cloudfront_cache_policy.managed_caching_optimized_tr.id
   }

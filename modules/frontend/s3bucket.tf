@@ -1,9 +1,11 @@
 resource "aws_s3_bucket" "tr_com" {
-  bucket = "toyokorivera.com"
+  bucket = local.site_domain
 }
 
 resource "aws_s3_bucket" "www_tr_com" {
-  bucket = "www.toyokorivera.com"
+  count = var.create_redirect ? 1 : 0
+  bucket = "www.${var.domain_name}"
+  
 }
 
 resource "aws_s3_bucket_website_configuration" "tr_com" {
@@ -19,10 +21,11 @@ resource "aws_s3_bucket_website_configuration" "tr_com" {
 }
 
 resource "aws_s3_bucket_website_configuration" "www_tr_com" {
-  bucket = aws_s3_bucket.www_tr_com.id
+  count = var.create_redirect ? 1 : 0
+  bucket = aws_s3_bucket.www_tr_com[0].id
 
   redirect_all_requests_to {
-    host_name = "toyokorivera.com"
+    host_name = var.domain_name
     protocol  = "https"
   }
 }
