@@ -1,10 +1,10 @@
-data "aws_cloudfront_cache_policy" "managed_caching_optimized_tr" {
+data "aws_cloudfront_cache_policy" "site" {
   name = "Managed-CachingOptimized"
 }
 
-resource "aws_cloudfront_distribution" "cf_distribution" {
+resource "aws_cloudfront_distribution" "site" {
   origin {
-    domain_name = aws_s3_bucket_website_configuration.tr_com.website_endpoint
+    domain_name = aws_s3_bucket_website_configuration.site.website_endpoint
     origin_id   = "site-origin"
 
     custom_origin_config {
@@ -25,7 +25,7 @@ resource "aws_cloudfront_distribution" "cf_distribution" {
     cached_methods         = ["GET", "HEAD"]
     target_origin_id       = "site-origin"
     viewer_protocol_policy = "redirect-to-https"
-    cache_policy_id        = data.aws_cloudfront_cache_policy.managed_caching_optimized_tr.id
+    cache_policy_id        = data.aws_cloudfront_cache_policy.site.id
   }
 
   restrictions {
@@ -34,7 +34,7 @@ resource "aws_cloudfront_distribution" "cf_distribution" {
     }
   }
   viewer_certificate {
-    acm_certificate_arn      = aws_acm_certificate_validation.cert_validation_tr_com.certificate_arn
+    acm_certificate_arn      = aws_acm_certificate_validation.certificate_validation.certificate_arn
     minimum_protocol_version = "TLSv1.2_2021"
     ssl_support_method       = "sni-only"
   }

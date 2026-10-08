@@ -1,15 +1,15 @@
-resource "aws_s3_bucket" "tr_com" {
+resource "aws_s3_bucket" "site" {
   bucket = local.site_domain
 }
 
-resource "aws_s3_bucket" "www_tr_com" {
+resource "aws_s3_bucket" "redirect" {
   count = var.create_redirect ? 1 : 0
   bucket = "www.${var.domain_name}"
   
 }
 
-resource "aws_s3_bucket_website_configuration" "tr_com" {
-  bucket = aws_s3_bucket.tr_com.id
+resource "aws_s3_bucket_website_configuration" "site" {
+  bucket = aws_s3_bucket.site.id
 
   index_document {
     suffix = "index.html"
@@ -20,9 +20,9 @@ resource "aws_s3_bucket_website_configuration" "tr_com" {
   }
 }
 
-resource "aws_s3_bucket_website_configuration" "www_tr_com" {
+resource "aws_s3_bucket_website_configuration" "redirect" {
   count = var.create_redirect ? 1 : 0
-  bucket = aws_s3_bucket.www_tr_com[0].id
+  bucket = aws_s3_bucket.redirect[0].id
 
   redirect_all_requests_to {
     host_name = var.domain_name
@@ -30,8 +30,8 @@ resource "aws_s3_bucket_website_configuration" "www_tr_com" {
   }
 }
 
-resource "aws_s3_bucket_public_access_block" "public_access" {
-  bucket = aws_s3_bucket.tr_com.id
+resource "aws_s3_bucket_public_access_block" "site" {
+  bucket = aws_s3_bucket.site.id
 
   block_public_acls       = false
   block_public_policy     = false
@@ -39,12 +39,12 @@ resource "aws_s3_bucket_public_access_block" "public_access" {
   restrict_public_buckets = false
 }
 
-resource "aws_s3_bucket_policy" "read_only_tr_com" {
-  bucket = aws_s3_bucket.tr_com.id
-  policy = data.aws_iam_policy_document.read_only_tr_com.json
+resource "aws_s3_bucket_policy" "site" {
+  bucket = aws_s3_bucket.site.id
+  policy = data.aws_iam_policy_document.site.json
 }
 
-data "aws_iam_policy_document" "read_only_tr_com" {
+data "aws_iam_policy_document" "site" {
   statement {
     principals {
       type        = "*"
@@ -56,7 +56,7 @@ data "aws_iam_policy_document" "read_only_tr_com" {
     ]
 
     resources = [
-      "${aws_s3_bucket.tr_com.arn}/*"
+      "${aws_s3_bucket.site.arn}/*"
     ]
   }
 }
