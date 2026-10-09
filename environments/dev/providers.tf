@@ -10,14 +10,14 @@ terraform {
 
   backend "s3" {
     bucket = "crc-s3-state"
-    key = "crc-aws-backend/terraform.tfstate"
+    key    = "cloud-resume-v2/dev/terraform.tfstate"
     region = "us-east-1"
 
-    dynamodb_table = "crc-s3-state-locks"
-    encrypt = true
+    use_lockfile = true
+    encrypt      = true
   }
 }
 
 provider "aws" {
-  region  = "us-east-1"
+  region = "us-east-1"
 }
