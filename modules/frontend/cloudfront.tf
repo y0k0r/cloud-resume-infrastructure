@@ -15,7 +15,7 @@ resource "aws_cloudfront_distribution" "site" {
     }
   }
 
-  aliases      = var.create_redirect ? [ local.site_domain, "www.${var.sub_domain}"] : [local.site_domain] 
+  aliases      = var.create_redirect ? [ local.site_domain, "www.${var.domain_name}"] : [local.site_domain] 
   enabled      = true
   http_version = "http2and3"
   price_class  = "PriceClass_100"
