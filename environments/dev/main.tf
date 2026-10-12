@@ -4,3 +4,8 @@ module "frontend" {
   sub_domain      = var.sub_domain
   domain_name     = var.domain_name
 }
+
+module "backend" {
+  source      = "../../modules/backend"
+  environment = var.environment
+}

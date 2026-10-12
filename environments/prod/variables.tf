@@ -1,11 +1,21 @@
 variable "create_redirect" {
-    type = bool
+  type = bool
 }
 
 variable "sub_domain" {
-    type = string
+  type = string
 }
 
 variable "domain_name" {
-    type = string
+  type = string
+}
+
+variable "environment" {
+  description = "Deployment environment"
+  type        = string
+
+  validation {
+    condition     = contains(["dev", "prod"], var.environment)
+    error_message = "Environment must be dev or prod."
+  }
 }

@@ -8,14 +8,14 @@ terraform {
 
   backend "s3" {
     bucket = "crc-s3-state"
-    key = "cloud-resume-infra/shared/terraform.tfstate"
+    key    = "cloud-resume-infra/shared/terraform.tfstate"
     region = "us-east-1"
 
     use_lockfile = true
-    encrypt = true
+    encrypt      = true
   }
 }
 
 provider "aws" {
-  region  = "us-east-1"
+  region = "us-east-1"
 }

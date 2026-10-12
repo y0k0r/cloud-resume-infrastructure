@@ -1,7 +1,7 @@
 resource "aws_acm_certificate" "site" {
-  domain_name               = local.site_domain 
+  domain_name               = local.site_domain
   validation_method         = "DNS"
-  subject_alternative_names = var.create_redirect ? ["www.${var.domain_name}"] : [] 
+  subject_alternative_names = var.create_redirect ? ["www.${var.domain_name}"] : []
 
   lifecycle {
     create_before_destroy = true
@@ -20,7 +20,7 @@ resource "aws_route53_record" "certificate_validation" {
 
   name    = each.value.name
   type    = each.value.type
-  zone_id = data.aws_route53_zone.site.zone_id 
+  zone_id = data.aws_route53_zone.site.zone_id
   records = [each.value.record]
   ttl     = 60
 }
