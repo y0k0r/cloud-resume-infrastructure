@@ -26,18 +26,18 @@ data "aws_iam_policy_document" "visitor_counter" {
 }
 
 resource "aws_iam_role" "visitor_counter" {
-  name                = "cloud-resume-${var.environment}-visitor-counter-lambda-role"
-  assume_role_policy  = data.aws_iam_policy_document.lambda_assume_role.json
+  name               = "cloud-resume-${var.environment}-visitor-counter-lambda-role"
+  assume_role_policy = data.aws_iam_policy_document.lambda_assume_role.json
 }
 
 resource "aws_iam_role_policy" "visitor_counter" {
-  name = "cloud-resume-${var.environment}-visitor-counter-dynamodb-policy"
-  role = aws_iam_role.visitor_counter.id
+  name   = "cloud-resume-${var.environment}-visitor-counter-dynamodb-policy"
+  role   = aws_iam_role.visitor_counter.id
   policy = data.aws_iam_policy_document.visitor_counter.json
 }
 
 resource "aws_iam_role_policy_attachment" "lambda_basic_execution" {
-  role = aws_iam_role.visitor_counter.name
+  role       = aws_iam_role.visitor_counter.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
 }
 
