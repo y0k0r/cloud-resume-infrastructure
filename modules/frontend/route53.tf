@@ -1,11 +1,11 @@
 data "aws_route53_zone" "site" {
-  name = var.domain_name
+  name         = var.domain_name
   private_zone = false
 }
 
 resource "aws_route53_record" "site" {
-  zone_id = data.aws_route53_zone.site.zone_id 
-  name    = local.site_domain 
+  zone_id = data.aws_route53_zone.site.zone_id
+  name    = local.site_domain
   type    = "A"
 
   alias {
@@ -16,9 +16,9 @@ resource "aws_route53_record" "site" {
 }
 
 resource "aws_route53_record" "redirect" {
-  count = var.create_redirect ? 1 : 0
-  zone_id = data.aws_route53_zone.site.zone_id 
-  name    = "www.${var.domain_name}" 
+  count   = var.create_redirect ? 1 : 0
+  zone_id = data.aws_route53_zone.site.zone_id
+  name    = "www.${var.domain_name}"
   type    = "A"
 
   alias {

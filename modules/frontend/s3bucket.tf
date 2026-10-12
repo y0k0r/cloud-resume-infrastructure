@@ -3,9 +3,9 @@ resource "aws_s3_bucket" "site" {
 }
 
 resource "aws_s3_bucket" "redirect" {
-  count = var.create_redirect ? 1 : 0
+  count  = var.create_redirect ? 1 : 0
   bucket = "www.${var.domain_name}"
-  
+
 }
 
 resource "aws_s3_bucket_website_configuration" "site" {
@@ -21,7 +21,7 @@ resource "aws_s3_bucket_website_configuration" "site" {
 }
 
 resource "aws_s3_bucket_website_configuration" "redirect" {
-  count = var.create_redirect ? 1 : 0
+  count  = var.create_redirect ? 1 : 0
   bucket = aws_s3_bucket.redirect[0].id
 
   redirect_all_requests_to {

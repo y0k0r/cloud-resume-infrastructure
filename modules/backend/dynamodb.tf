@@ -1,5 +1,5 @@
 resource "aws_dynamodb_table" "visitor_counter" {
-  name         = "counter"
+  name         = "cloud-resume-${var.environment}-visitor-counter"
   billing_mode = "PAY_PER_REQUEST"
   hash_key     = "counterName"
   attribute {
@@ -8,7 +8,7 @@ resource "aws_dynamodb_table" "visitor_counter" {
   }
 }
 
-resource "aws_dynamodb_table_item" "resumeVisitorCounter" {
+resource "aws_dynamodb_table_item" "visitor_counter" {
   table_name = aws_dynamodb_table.visitor_counter.name
   hash_key   = aws_dynamodb_table.visitor_counter.hash_key
 

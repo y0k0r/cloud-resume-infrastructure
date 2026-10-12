@@ -1,10 +1,10 @@
-variable create_redirect {
-    type = bool
+variable "create_redirect" {
+  type = bool
 }
 variable "sub_domain" {
-    type = string
+  type = string
 }
 
 variable "domain_name" {
-    type = string
+  type = string
 }

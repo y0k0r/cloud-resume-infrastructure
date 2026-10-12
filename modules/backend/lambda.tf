@@ -1,4 +1,4 @@
-data "aws_iam_policy_document" "assume_role" {
+data "aws_iam_policy_document" "lambda_assume_role" {
   statement {
     effect = "Allow"
 
@@ -11,25 +11,49 @@ data "aws_iam_policy_document" "assume_role" {
   }
 }
 
-resource "aws_iam_role" "lambda_dynamodb_role2" {
-  name                = "lambda_dynamodb_role2"
-  assume_role_policy  = data.aws_iam_policy_document.assume_role.json
-  managed_policy_arns = ["arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess", "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"]
+data "aws_iam_policy_document" "visitor_counter" {
+  statement {
+    sid = "VisitorCounter"
+    actions = [
+      "dynamodb:GetItem",
+      "dynamodb:UpdateItem"
+    ]
+
+    resources = [
+      aws_dynamodb_table.visitor_counter.arn
+    ]
+  }
 }
 
-data "archive_file" "lambda" {
+resource "aws_iam_role" "visitor_counter" {
+  name                = "cloud-resume-${var.environment}-visitor-counter-lambda-role"
+  assume_role_policy  = data.aws_iam_policy_document.lambda_assume_role.json
+}
+
+resource "aws_iam_role_policy" "visitor_counter" {
+  name = "cloud-resume-${var.environment}-visitor-counter-dynamodb-policy"
+  role = aws_iam_role.visitor_counter.id
+  policy = data.aws_iam_policy_document.visitor_counter.json
+}
+
+resource "aws_iam_role_policy_attachment" "lambda_basic_execution" {
+  role = aws_iam_role.visitor_counter.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+}
+
+data "archive_file" "visitor_counter" {
   type        = "zip"
-  source_file = "lambda_function.py"
-  output_path = "lambda_function_visitor_counter.zip"
+  source_file = "visitor_counter.py"
+  output_path = "${path.module}/visitor_counter.zip"
 }
 
-resource "aws_lambda_function" "updateCounter" {
-  filename      = "lambda_function_visitor_counter.zip"
-  function_name = "updateCrcVistorCounter2"
-  role          = aws_iam_role.lambda_dynamodb_role2.arn
+resource "aws_lambda_function" "visitor_counter" {
+  filename      = data.archive_file.visitor_counter.output_path
+  function_name = "cloud-resume-${var.environment}-visitor-counter"
+  role          = aws_iam_role.visitor_counter.arn
   handler       = "lambda_function.lambda_handler"
 
-  source_code_hash = data.archive_file.lambda.output_base64sha256
+  source_code_hash = data.archive_file.visitor_counter.output_base64sha256
 
-  runtime = "python3.9"
+  runtime = "python3.13"
 }
